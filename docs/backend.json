@@ -1,0 +1,78 @@
+{
+  "entities": {
+    "AttendanceRecord": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AttendanceRecord",
+      "type": "object",
+      "description": "Records individual student attendance events, capturing check-in details and timestamp.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AttendanceRecord entity."
+        },
+        "studentEmail": {
+          "type": "string",
+          "description": "The instructional email address of the student who checked in. (Expected domain: 'neu.edu.ph')",
+          "format": "email"
+        },
+        "sex": {
+          "type": "string",
+          "description": "The reported sex of the student, typically 'Male' or 'Female'."
+        },
+        "collegeProgram": {
+          "type": "string",
+          "description": "The college program the student belongs to, selected from a predefined list of university programs."
+        },
+        "checkInDateTime": {
+          "type": "string",
+          "description": "The exact date and time when the student recorded their attendance.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "studentEmail",
+        "sex",
+        "collegeProgram",
+        "checkInDateTime"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/attendanceRecords",
+        "definition": {
+          "entityName": "AttendanceRecord",
+          "schema": {
+            "$ref": "#/backend/entities/AttendanceRecord"
+          },
+          "description": "Top-level collection for all student attendance records. Each document represents a single check-in event. This collection supports efficient querying for the admin dashboard. Includes denormalized 'studentEmail', 'sex', and 'collegeProgram' for direct filtering and reporting. This ensures Authorization Independence as documents are self-contained and do not rely on parent data for access control during creation. This collection allows admins to perform QAPs (list operations) across all records."
+        }
+      },
+      {
+        "path": "/roles_admin/{adminId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Identifies authenticated users with administrative privileges. The existence of a document at `/roles_admin/{request.auth.uid}` grants administrator read access to `/attendanceRecords`. This collection ensures Authorization Independence as it uses a flat, direct lookup for roles, eliminating hierarchical dependencies for authorization checks. The schema for 'User' is implicit here, signifying an admin user by document existence.",
+          "params": [
+            {
+              "name": "adminId",
+              "description": "The Firebase Authentication UID of the administrator who is logging in."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The proposed Firestore structure prioritizes Authorization Independence and robust QAPs (Queries as Permissions) by segregating data based on its security posture and explicitly defining access roles in the database. The core collection, '/attendanceRecords', is a top-level collection designed to store all student check-in data. This flat structure ensures that each 'AttendanceRecord' document is self-contained and its creation does not depend on complex hierarchical authorization lookups, thus achieving Authorization Independence for writes. Students, potentially using anonymous authentication, will directly write to this collection after client-side validation of email domain, sex, and college program.\n\nFor administrative access, a separate collection, '/roles_admin/{adminId}', implements a Database Access Control (DBAC) pattern. The mere existence of a document at `/roles_admin/{request.auth.uid}` grants an authenticated user administrative privileges. This method ensures Authorization Independence for read operations on 'attendanceRecords' because rules can perform a direct `exists()` check without requiring expensive `get()` calls on parent documents or complex attribute lookups. This also makes the authorization intent crystal clear and highly debuggable.\n\nThe structure supports required QAPs by allowing administrators to perform `list` operations on the entire '/attendanceRecords' collection. Since all necessary filtering fields (studentEmail, sex, collegeProgram, checkInDateTime) are denormalized directly within each 'AttendanceRecord' document, the admin dashboard can execute efficient, direct queries against this single collection. This avoids the need for security rules to act as data filters, which is inefficient and insecure. For example, an admin can query all records by 'collegeProgram' or 'sex' directly without traversing subcollections or performing multiple lookups. The hierarchical time-based reporting (Hour, Day, Month, Year) can be achieved by querying the 'checkInDateTime' field using appropriate date range filters."
+  }
+}
