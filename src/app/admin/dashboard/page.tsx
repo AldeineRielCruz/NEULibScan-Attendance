@@ -32,8 +32,8 @@ export default function AdminDashboard() {
   
   const recordsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    // We query the attendanceRecords collection ordered by the timestamp
-    return query(collection(firestore, 'attendanceRecords'), orderBy('timestamp', 'desc'));
+    // We query the attendanceRecords collection ordered by the check-in time
+    return query(collection(firestore, 'attendanceRecords'), orderBy('checkInDateTime', 'desc'));
   }, [firestore, user]);
 
   const { data: records, isLoading: isDataLoading } = useCollection<AttendanceRecord>(recordsQuery);
@@ -179,15 +179,15 @@ export default function AdminDashboard() {
                 ) : (
                   attendanceList.map((record) => (
                     <TableRow key={record.id} className="border-primary/5 hover:bg-accent/5">
-                      <TableCell className="font-medium font-body">{record.email}</TableCell>
+                      <TableCell className="font-medium font-body">{record.studentEmail}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className={record.sex === 'Male' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-pink-200 text-pink-700 bg-pink-50'}>
                           {record.sex}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-body text-muted-foreground">{record.program}</TableCell>
+                      <TableCell className="font-body text-muted-foreground">{record.collegeProgram}</TableCell>
                       <TableCell className="font-body text-sm">
-                        {new Date(record.timestamp).toLocaleDateString()} {new Date(record.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(record.checkInDateTime).toLocaleDateString()} {new Date(record.checkInDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </TableCell>
                       <TableCell className="text-right">
                         <Badge className="bg-primary hover:bg-primary/90">Present</Badge>

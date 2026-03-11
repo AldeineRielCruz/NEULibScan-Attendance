@@ -14,7 +14,7 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AttendanceRecord } from '@/lib/attendance';
+import { AttendanceRecord, COLLEGE_PROGRAMS } from '@/lib/attendance';
 import { format, parseISO, startOfHour, startOfDay, startOfMonth, startOfYear, eachHourOfInterval, eachDayOfInterval, subDays, startOfDay as fnsStartOfDay, endOfDay, eachMonthOfInterval, startOfYear as fnsStartOfYear, endOfYear } from 'date-fns';
 
 interface DashboardChartsProps {
@@ -26,17 +26,24 @@ type TimeScale = 'hour' | 'day' | 'month' | 'year';
 export default function DashboardCharts({ records }: DashboardChartsProps) {
   const [timeScale, setTimeScale] = useState<TimeScale>('hour');
 
-  // Process College Program Data
+  // Process College Program Data - Include all programs for full comparison
   const programData = useMemo(() => {
-    const counts = records.reduce((acc: Record<string, number>, curr) => {
-      acc[curr.program] = (acc[curr.program] || 0) + 1;
+    // Initialize counts for all programs with 0
+    const counts: Record<string, number> = COLLEGE_PROGRAMS.reduce((acc, prog) => {
+      acc[prog] = 0;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
+    
+    // Aggregate data from records
+    records.forEach(curr => {
+      if (counts[curr.collegeProgram] !== undefined) {
+        counts[curr.collegeProgram]++;
+      }
+    });
     
     return Object.entries(counts)
       .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 6);
+      .sort((a, b) => b.value - a.value); // Sort by count descending
   }, [records]);
 
   // Process Sex Data
@@ -52,7 +59,7 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
     
     // Group existing records
     records.forEach(record => {
-      const date = parseISO(record.timestamp);
+      const date = parseISO(record.checkInDateTime);
       let key = '';
       
       switch (timeScale) {
@@ -76,7 +83,6 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
 
     // Generate full timeline labels based on current time context
     if (timeScale === 'hour') {
-      // Show full 24 hours of the current day
       const dayStart = fnsStartOfDay(now);
       const dayEnd = endOfDay(now);
       const hours = eachHourOfInterval({ start: dayStart, end: dayEnd });
@@ -86,7 +92,6 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
         data.push({ label, count: groupMap[label] || 0 });
       });
     } else if (timeScale === 'day') {
-      // Show last 7 days including today
       const weekStart = subDays(now, 6);
       const days = eachDayOfInterval({ start: weekStart, end: now });
       
@@ -95,7 +100,6 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
         data.push({ label, count: groupMap[label] || 0 });
       });
     } else if (timeScale === 'month') {
-      // Show all months of the current year
       const yearStart = fnsStartOfYear(now);
       const yearEnd = endOfYear(now);
       const months = eachMonthOfInterval({ start: yearStart, end: yearEnd });
@@ -105,7 +109,6 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
         data.push({ label, count: groupMap[label] || 0 });
       });
     } else if (timeScale === 'year') {
-      // Show a 5-year window (current year +/- 2)
       const currentYear = now.getFullYear();
       for (let i = currentYear - 2; i <= currentYear + 2; i++) {
         const label = i.toString();
@@ -116,33 +119,33 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
     return data;
   }, [records, timeScale]);
 
-  const COLORS = ['#2F5F2F', '#93DB74', '#5F9F5F', '#ECF6EC', '#228B22'];
+  const COLORS = ['#2F5F2F', '#93DB74', '#5F9F5F', '#86C232', '#228B22', '#32CD32', '#6B8E23', '#556B2F'];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* College Program Distribution */}
+      {/* College Program Distribution - Showing all programs */}
       <Card className="lg:col-span-2 border-primary/10 shadow-md">
         <CardHeader>
-          <CardTitle className="font-headline text-xl text-primary">Top Participation by Program</CardTitle>
-          <CardDescription>Distribution of attendance across various university colleges.</CardDescription>
+          <CardTitle className="font-headline text-xl text-primary">Participation by Program</CardTitle>
+          <CardDescription>Comprehensive comparison of attendance across all university colleges.</CardDescription>
         </CardHeader>
-        <CardContent className="h-80">
+        <CardContent className="h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={programData}>
-              <XAxis 
+            <BarChart data={programData} layout="vertical" margin={{ left: 40, right: 20 }}>
+              <XAxis type="number" hide />
+              <YAxis 
+                type="category" 
                 dataKey="name" 
-                tick={{fontSize: 12, fill: 'hsl(var(--muted-foreground))'}} 
-                axisLine={false} 
+                width={120}
+                tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}}
+                axisLine={false}
                 tickLine={false}
-                interval={0}
-                tickFormatter={(val) => val.length > 15 ? val.substring(0, 12) + '...' : val}
               />
-              <YAxis hide />
               <Tooltip 
                 cursor={{fill: 'rgba(47, 95, 47, 0.05)'}}
                 contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
               />
-              <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={15}>
                 {programData.map((entry: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -158,7 +161,7 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
           <CardTitle className="font-headline text-xl text-primary">Gender Split</CardTitle>
           <CardDescription>Ratio of male to female students.</CardDescription>
         </CardHeader>
-        <CardContent className="h-80 flex flex-col items-center justify-center">
+        <CardContent className="h-96 flex flex-col items-center justify-center">
           <ResponsiveContainer width="100%" height="80%">
             <PieChart>
               <Pie

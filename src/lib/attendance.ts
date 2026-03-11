@@ -16,12 +16,15 @@ export type CollegeProgram =
   | 'Respiratory Therapy'
   | 'International Relations';
 
+/**
+ * AttendanceRecord interface aligned with backend.json schema.
+ */
 export interface AttendanceRecord {
   id: string;
-  email: string;
+  studentEmail: string;
   sex: 'Male' | 'Female';
-  program: CollegeProgram;
-  timestamp: string;
+  collegeProgram: CollegeProgram;
+  checkInDateTime: string;
 }
 
 export const COLLEGE_PROGRAMS: CollegeProgram[] = [

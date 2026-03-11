@@ -16,7 +16,7 @@ import { COLLEGE_PROGRAMS, AttendanceRecord } from '@/lib/attendance';
 import { BookOpen, GraduationCap, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useFirestore, useFirebase, useUser } from '@/firebase';
-import { doc, collection } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { signInAnonymously } from 'firebase/auth';
 
@@ -30,7 +30,9 @@ export default function StudentCheckIn() {
   // Ensure students are signed in anonymously so they can satisfy security rules
   useEffect(() => {
     if (auth && !user) {
-      signInAnonymously(auth).catch(console.error);
+      signInAnonymously(auth).catch((err) => {
+        console.error("Anonymous sign-in failed", err);
+      });
     }
   }, [auth, user]);
 
@@ -57,15 +59,15 @@ export default function StudentCheckIn() {
     }
 
     try {
-      const recordId = Math.random().toString(36).substr(2, 9);
+      const recordId = Math.random().toString(36).substring(2, 11);
       const attendanceRef = doc(firestore, 'attendanceRecords', recordId);
       
       const recordData: AttendanceRecord = {
         id: recordId,
-        email,
-        sex,
-        program,
-        timestamp: new Date().toISOString(),
+        studentEmail: email,
+        sex: sex,
+        collegeProgram: program,
+        checkInDateTime: new Date().toISOString(),
       };
 
       setDocumentNonBlocking(attendanceRef, recordData, { merge: true });
