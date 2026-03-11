@@ -1,4 +1,4 @@
-# Firebase Studio
+## NEULib Scan - Library attendance system with dashboard
 
 This is a NextJS starter in Firebase Studio.
 
