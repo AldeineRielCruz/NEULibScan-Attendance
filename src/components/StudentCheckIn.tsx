@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -14,36 +13,54 @@ import {
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { submitCheckIn } from '@/app/actions';
-import { useToast } from '@/hooks/use-toast';
 import { COLLEGE_PROGRAMS } from '@/lib/attendance';
-import { BookOpen, GraduationCap } from 'lucide-react';
+import { BookOpen, GraduationCap, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function StudentCheckIn() {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsSubmitting(true);
+    setStatus('loading');
+    setErrorMessage('');
 
     const formData = new FormData(event.currentTarget);
     
     try {
       await submitCheckIn(formData);
-      toast({
-        title: "Attendance Recorded",
-        description: "Thank you for checking in. Have a great day!",
-      });
+      setStatus('success');
       (event.target as HTMLFormElement).reset();
+      // Keep success message for 5 seconds then go back to idle
+      setTimeout(() => setStatus('idle'), 5000);
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Check-in Failed",
-        description: error.message,
-      });
-    } finally {
-      setIsSubmitting(false);
+      setStatus('error');
+      setErrorMessage(error.message || 'Something went wrong. Please try again.');
     }
+  }
+
+  if (status === 'success') {
+    return (
+      <div className="py-12 flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in zoom-in duration-300">
+        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+          <CheckCircle2 className="w-12 h-12 text-primary" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-3xl font-headline font-bold text-primary">Attendance Recorded</h2>
+          <p className="text-muted-foreground font-body max-w-xs mx-auto">
+            Thank you for checking in. Your presence has been successfully logged for today.
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => setStatus('idle')}
+          className="border-primary text-primary hover:bg-primary/5"
+        >
+          Register Another Student
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -56,6 +73,14 @@ export default function StudentCheckIn() {
         <p className="text-muted-foreground font-body">Please record your presence for today's session.</p>
       </div>
 
+      {status === 'error' && (
+        <Alert variant="destructive" className="border-destructive/50 bg-destructive/5">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Check-in Failed</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="email" className="font-body font-bold">Instructional Email</Label>
@@ -66,12 +91,13 @@ export default function StudentCheckIn() {
             placeholder="your-id@neu.edu.ph" 
             required 
             className="border-primary/20 focus:border-primary"
+            disabled={status === 'loading'}
           />
         </div>
 
         <div className="space-y-2">
           <Label className="font-body font-bold">Sex</Label>
-          <RadioGroup name="sex" defaultValue="Male" className="flex space-x-4">
+          <RadioGroup name="sex" defaultValue="Male" className="flex space-x-4" disabled={status === 'loading'}>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="Male" id="male" />
               <Label htmlFor="male">Male</Label>
@@ -85,7 +111,7 @@ export default function StudentCheckIn() {
 
         <div className="space-y-2">
           <Label htmlFor="program" className="font-body font-bold">College Program</Label>
-          <Select name="program" required>
+          <Select name="program" required disabled={status === 'loading'}>
             <SelectTrigger className="border-primary/20">
               <SelectValue placeholder="Select your program" />
             </SelectTrigger>
@@ -102,9 +128,14 @@ export default function StudentCheckIn() {
         <Button 
           type="submit" 
           className="w-full bg-primary hover:bg-primary/90 text-white font-headline text-lg py-6"
-          disabled={isSubmitting}
+          disabled={status === 'loading'}
         >
-          {isSubmitting ? 'Recording...' : 'Check In Now'}
+          {status === 'loading' ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Recording Presence...
+            </>
+          ) : 'Check In Now'}
         </Button>
       </form>
 

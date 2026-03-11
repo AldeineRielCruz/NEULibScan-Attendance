@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -6,36 +5,29 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { adminLogin } from '@/app/actions';
-import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { Lock, ShieldCheck } from 'lucide-react';
+import { Lock, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function AdminLogin() {
-  const { toast } = useToast();
   const router = useRouter();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsLoggingIn(true);
+    setStatus('loading');
+    setErrorMessage('');
 
     const formData = new FormData(event.currentTarget);
     
     try {
       await adminLogin(formData);
-      toast({
-        title: "Login Successful",
-        description: "Redirecting to admin dashboard...",
-      });
+      setStatus('idle'); // Just to clear loading state before redirect
       router.push('/admin/dashboard');
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: error.message,
-      });
-    } finally {
-      setIsLoggingIn(false);
+      setStatus('error');
+      setErrorMessage(error.message || 'Invalid credentials. Please try again.');
     }
   }
 
@@ -49,6 +41,14 @@ export default function AdminLogin() {
         <p className="text-muted-foreground font-body">Authorized personnel only.</p>
       </div>
 
+      {status === 'error' && (
+        <Alert variant="destructive" className="border-destructive/50 bg-destructive/5">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Authentication Failed</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="admin-email" className="font-body font-bold text-sm">Email Address</Label>
@@ -56,9 +56,10 @@ export default function AdminLogin() {
             id="admin-email" 
             name="email" 
             type="email" 
-            placeholder="email" 
+            placeholder="admin@neu.edu.ph" 
             required 
             className="border-primary/20"
+            disabled={status === 'loading'}
           />
         </div>
 
@@ -71,15 +72,21 @@ export default function AdminLogin() {
             placeholder="••••••••" 
             required 
             className="border-primary/20"
+            disabled={status === 'loading'}
           />
         </div>
 
         <Button 
           type="submit" 
           className="w-full bg-primary hover:bg-primary/90 text-white font-headline text-lg py-6"
-          disabled={isLoggingIn}
+          disabled={status === 'loading'}
         >
-          {isLoggingIn ? 'Authenticating...' : 'Enter Dashboard'}
+          {status === 'loading' ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Authenticating...
+            </>
+          ) : 'Enter Dashboard'}
         </Button>
       </form>
 

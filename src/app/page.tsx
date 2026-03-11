@@ -1,9 +1,7 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import StudentCheckIn from '@/components/StudentCheckIn';
 import AdminLogin from '@/components/AdminLogin';
-import { Toaster } from '@/components/ui/toaster';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -20,6 +18,7 @@ export default function Home() {
           fill
           className="object-cover opacity-20"
           priority
+          data-ai-hint="university library"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/90 to-accent/20" />
       </div>
@@ -66,7 +65,6 @@ export default function Home() {
           &copy; {new Date().getFullYear()} EduRegister Scan. All rights reserved for New Era University.
         </p>
       </div>
-      <Toaster />
     </main>
   );
 }
