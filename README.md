@@ -1,5 +1,7 @@
 ## NEULib Scan - Library attendance system with dashboard
 
-This is a NextJS starter in Firebase Studio.
+Website was made with NextJS starter in Firebase Studio.
+An attendance website form that looks and records for an NEU institional email along with sex and college program.
+Has a tab for logging in to the admin dashboard page.
+Uses a Firebox database which has real-time viewing of the data without refreshing the admin dashboard page.
 
-To get started, take a look at src/app/page.tsx.
