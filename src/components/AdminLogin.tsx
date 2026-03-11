@@ -93,7 +93,7 @@ export default function AdminLogin() {
             id="admin-email" 
             name="email" 
             type="email" 
-            placeholder="admin@neu.edu.ph" 
+            placeholder="name@neu.edu.ph" 
             required 
             className="border-primary/20"
             disabled={status === 'loading'}
@@ -106,7 +106,7 @@ export default function AdminLogin() {
             id="admin-password" 
             name="password" 
             type="password" 
-            placeholder="••••••••" 
+            placeholder="Password" 
             required 
             className="border-primary/20"
             disabled={status === 'loading'}

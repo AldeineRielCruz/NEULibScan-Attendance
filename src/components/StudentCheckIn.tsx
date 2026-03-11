@@ -129,7 +129,7 @@ export default function StudentCheckIn() {
             id="email" 
             name="email" 
             type="email" 
-            placeholder="your-id@neu.edu.ph" 
+            placeholder="name@neu.edu.ph" 
             required 
             className="border-primary/20 focus:border-primary"
             disabled={status === 'loading'}

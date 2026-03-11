@@ -26,7 +26,7 @@ export default function Home() {
       <div className="w-full max-w-xl z-10">
         <div className="text-center mb-8">
           <h1 className="text-5xl md:text-6xl font-headline font-bold text-primary mb-2 drop-shadow-sm">
-            EduRegister Scan
+          NEULib Scan
           </h1>
           <div className="h-1 w-24 bg-accent mx-auto rounded-full" />
         </div>
@@ -62,7 +62,7 @@ export default function Home() {
         </Card>
 
         <p className="text-center mt-8 text-muted-foreground font-body text-sm">
-          &copy; {new Date().getFullYear()} EduRegister Scan. All rights reserved for New Era University.
+          &copy; {new Date().getFullYear()} NEULib Scan. This is a mock website.
         </p>
       </div>
     </main>

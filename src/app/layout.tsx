@@ -3,7 +3,7 @@ import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'EduRegister Scan | University Attendance System',
+  title: 'NEULib Scan',
   description: 'The smart way to record your university presence.',
 };
 
