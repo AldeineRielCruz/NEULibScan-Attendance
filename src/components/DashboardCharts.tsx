@@ -15,7 +15,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AttendanceRecord } from '@/lib/attendance';
-import { format, parseISO, startOfHour, startOfDay, startOfMonth, startOfYear } from 'date-fns';
+import { format, parseISO, startOfHour, startOfDay, startOfMonth, startOfYear, eachHourOfInterval, eachDayOfInterval, subDays, startOfDay as fnsStartOfDay, endOfDay, eachMonthOfInterval, startOfYear as fnsStartOfYear, endOfYear } from 'date-fns';
 
 interface DashboardChartsProps {
   records: AttendanceRecord[];
@@ -45,12 +45,12 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
     { name: 'Female', value: records.filter(r => r.sex === 'Female').length },
   ], [records]);
 
-  // Process Time Data based on selected scale
+  // Process Time Data based on selected scale with a continuous timeline
   const timeChartData = useMemo(() => {
-    if (records.length === 0) return [];
-
+    const now = new Date();
     const groupMap: Record<string, number> = {};
     
+    // Group existing records
     records.forEach(record => {
       const date = parseISO(record.timestamp);
       let key = '';
@@ -69,18 +69,51 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
           key = format(startOfYear(date), 'yyyy');
           break;
       }
-      
       groupMap[key] = (groupMap[key] || 0) + 1;
     });
 
-    // For hourly, we want to ensure a range if it's today's data, but for generic records we just show existing
-    return Object.entries(groupMap)
-      .map(([label, count]) => ({ label, count }))
-      .sort((a, b) => {
-        // Simple string sort works for most formats here, but for Hour we want numeric
-        if (timeScale === 'hour') return a.label.localeCompare(b.label);
-        return a.label.localeCompare(b.label); // Basic chronological for simple formats
+    const data: { label: string; count: number }[] = [];
+
+    // Generate full timeline labels based on current time context
+    if (timeScale === 'hour') {
+      // Show full 24 hours of the current day
+      const dayStart = fnsStartOfDay(now);
+      const dayEnd = endOfDay(now);
+      const hours = eachHourOfInterval({ start: dayStart, end: dayEnd });
+      
+      hours.forEach(hour => {
+        const label = format(hour, 'HH:00');
+        data.push({ label, count: groupMap[label] || 0 });
       });
+    } else if (timeScale === 'day') {
+      // Show last 7 days including today
+      const weekStart = subDays(now, 6);
+      const days = eachDayOfInterval({ start: weekStart, end: now });
+      
+      days.forEach(day => {
+        const label = format(day, 'MMM dd');
+        data.push({ label, count: groupMap[label] || 0 });
+      });
+    } else if (timeScale === 'month') {
+      // Show all months of the current year
+      const yearStart = fnsStartOfYear(now);
+      const yearEnd = endOfYear(now);
+      const months = eachMonthOfInterval({ start: yearStart, end: yearEnd });
+      
+      months.forEach(month => {
+        const label = format(month, 'MMMM');
+        data.push({ label, count: groupMap[label] || 0 });
+      });
+    } else if (timeScale === 'year') {
+      // Show a 5-year window (current year +/- 2)
+      const currentYear = now.getFullYear();
+      for (let i = currentYear - 2; i <= currentYear + 2; i++) {
+        const label = i.toString();
+        data.push({ label, count: groupMap[label] || 0 });
+      }
+    }
+
+    return data;
   }, [records, timeScale]);
 
   const COLORS = ['#2F5F2F', '#93DB74', '#5F9F5F', '#ECF6EC', '#228B22'];
@@ -159,7 +192,7 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
         <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
           <div>
             <CardTitle className="font-headline text-xl text-primary">Attendance Time Analysis</CardTitle>
-            <CardDescription>Analyze peaks and trends across different time hierarchies.</CardDescription>
+            <CardDescription>Analyze peaks and trends across a continuous timeline.</CardDescription>
           </div>
           <Tabs value={timeScale} onValueChange={(val) => setTimeScale(val as TimeScale)} className="w-full md:w-auto">
             <TabsList className="bg-primary/5 grid grid-cols-4 md:flex">
@@ -175,9 +208,10 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
             <BarChart data={timeChartData}>
               <XAxis 
                 dataKey="label" 
-                tick={{fontSize: 11}} 
+                tick={{fontSize: 10}} 
                 axisLine={false} 
                 tickLine={false} 
+                interval={timeScale === 'hour' ? 2 : 0}
               />
               <YAxis hide />
               <Tooltip 
