@@ -37,18 +37,23 @@ export default function AdminLogin() {
       
       router.push('/admin/dashboard');
     } catch (error: any) {
+      console.error('Auth error:', error);
       setStatus('error');
+      
+      // Provide user-friendly messages for common Firebase Auth errors
       if (error.code === 'auth/user-not-found') {
-        setErrorMessage('Account not found. Please use the "Register" mode to create your admin account.');
+        setErrorMessage('Account not found. If you are a new admin, please use the "Register" mode below.');
+      } else if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        setErrorMessage('The email or password you entered is incorrect. Please try again.');
       } else if (error.code === 'auth/email-already-in-use') {
-        setErrorMessage('This email is already registered. Please use "Sign In" mode.');
+        setErrorMessage('This email is already registered. Please use the "Sign In" mode.');
       } else if (error.code === 'auth/weak-password') {
-        setErrorMessage('Password should be at least 6 characters.');
+        setErrorMessage('Your password is too weak. It must be at least 6 characters long.');
+      } else if (error.code === 'auth/invalid-email') {
+        setErrorMessage('Please enter a valid email address (e.g., name@neu.edu.ph).');
       } else {
-        setErrorMessage(error.message || 'Authentication failed. Please check your credentials.');
+        setErrorMessage(error.message || 'An unexpected error occurred. Please check your connection and try again.');
       }
-    } finally {
-      setStatus('idle');
     }
   }
 
@@ -66,10 +71,10 @@ export default function AdminLogin() {
         </p>
       </div>
 
-      {status === 'error' && (
-        <Alert variant="destructive" className="border-destructive/50 bg-destructive/5">
+      {status === 'error' && errorMessage && (
+        <Alert variant="destructive" className="border-destructive/50 bg-destructive/5 animate-in fade-in slide-in-from-top-2">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Authentication Failed</AlertTitle>
+          <AlertTitle>Login Failed</AlertTitle>
           <AlertDescription>{errorMessage}</AlertDescription>
         </Alert>
       )}
@@ -109,7 +114,7 @@ export default function AdminLogin() {
           {status === 'loading' ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Processing...
+              Authenticating...
             </>
           ) : (
             mode === 'signin' ? 'Enter Dashboard' : 'Register Account'
@@ -119,7 +124,11 @@ export default function AdminLogin() {
 
       <div className="flex flex-col gap-4">
         <button
-          onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
+          onClick={() => {
+            setMode(mode === 'signin' ? 'signup' : 'signin');
+            setErrorMessage('');
+            setStatus('idle');
+          }}
           className="text-sm text-primary hover:underline font-bold flex items-center justify-center gap-2"
         >
           {mode === 'signin' ? (
