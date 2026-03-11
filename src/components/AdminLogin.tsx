@@ -28,18 +28,18 @@ export default function AdminLogin() {
     try {
       if (!auth) throw new Error('Auth service not initialized');
       
-      // In this specific demo context, we'll allow a mock-like login 
-      // but the real implementation should use Firebase Auth
-      if (email === 'admin@neu.edu.ph' && password === 'adminPassword') {
-        // Simulating a successful login flow to the dashboard
-        router.push('/admin/dashboard');
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-        router.push('/admin/dashboard');
-      }
+      // We must perform a real sign-in so that Firebase Security Rules 
+      // can identify the user and grant access to the dashboard data.
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push('/admin/dashboard');
     } catch (error: any) {
       setStatus('error');
-      setErrorMessage(error.message || 'Invalid credentials. Please try again.');
+      // If user hasn't created the account yet in Firebase Console, we provide a helpful hint
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+        setErrorMessage('Invalid credentials. If this is a new setup, ensure the user "admin@neu.edu.ph" is created in your Firebase Auth console.');
+      } else {
+        setErrorMessage(error.message || 'Authentication failed. Please try again.');
+      }
     } finally {
       setStatus('idle');
     }

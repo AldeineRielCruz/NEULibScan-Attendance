@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,14 +15,24 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { COLLEGE_PROGRAMS, AttendanceRecord } from '@/lib/attendance';
 import { BookOpen, GraduationCap, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useFirestore } from '@/firebase';
+import { useFirestore, useFirebase, useUser } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { signInAnonymously } from 'firebase/auth';
 
 export default function StudentCheckIn() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const firestore = useFirestore();
+  const { auth } = useFirebase();
+  const { user } = useUser();
+
+  // Ensure students are signed in anonymously so they can satisfy security rules
+  useEffect(() => {
+    if (auth && !user) {
+      signInAnonymously(auth).catch(console.error);
+    }
+  }, [auth, user]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

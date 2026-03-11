@@ -15,16 +15,6 @@ service cloud.firestore {
      * - /attendanceRecords/{recordId}: A flat, top-level collection containing all check-in events.
      * - /roles_admin/{adminId}: A lookup collection where the existence of a document grants 
      *   admin-level permissions to the UID matching the document ID.
-     *
-     * Key Security Decisions:
-     * 1. Authorization Independence: Read access for admins is determined by a direct 'exists()' 
-     *    check on the roles collection, making the rules performant and independent of data hierarchy.
-     * 2. Anonymous Submission: Since the app supports anonymous auth, 'create' operations on 
-     *    attendance records are permitted for any authenticated user to ensure low-friction check-ins.
-     * 3. Admin-Only Visibility: Only users with a record in 'roles_admin' can list or get individual 
-     *    attendance records, protecting student privacy.
-     * 4. Denormalization for Authorization: Student details (email, program) are stored directly 
-     *    on each record to allow admins to perform complex filtering/reporting without additional joins.
      */
 
     // --- Global Helper Functions ---
@@ -34,9 +24,15 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    /** @description Checks if the user's UID exists in the admin roles collection. */
+    /** 
+     * @description Checks if the user is an administrator.
+     * For prototyping, we also allow the hardcoded admin email.
+     */
     function isAdmin() {
-      return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid)) ||
+        request.auth.token.email == 'admin@neu.edu.ph'
+      );
     }
 
     /** @description Checks if the user is the owner of the document based on the provided ID. */
@@ -44,45 +40,30 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /** @description Combines admin check with existence check for safe updates/deletes. */
-    function isExistingAdmin() {
-      return isAdmin() && resource != null;
-    }
-
     // --- Collection Rules ---
 
     /**
-     * @description Rules for the admin roles collection. Used for authorization lookups.
      * @path /roles_admin/{adminId}
-     * @allow (get) If the user is viewing their own admin status.
-     * @deny (create, update, delete) Prevents users from self-elevating their privileges.
-     * @principle Role-based access control via document existence.
      */
     match /roles_admin/{adminId} {
       allow get: if isOwner(adminId);
       allow list: if isAdmin();
-      allow create, update, delete: if false; // Managed via Firebase Console or Admin SDK
+      allow create, update, delete: if false; 
     }
 
     /**
-     * @description Rules for student attendance records.
      * @path /attendanceRecords/{recordId}
-     * @allow (create) Any authenticated user (including anonymous) can submit a record.
-     * @allow (list, get) Only verified administrators can view attendance data.
-     * @deny (update, delete) Non-admin users cannot modify or remove records once submitted.
-     * @principle Public-write (authenticated) with Admin-only read access.
      */
     match /attendanceRecords/{recordId} {
       
       // Read Operations: Only Admins can see the data
       allow get, list: if isAdmin();
 
-      // Create Operation: Allow students to check in. 
-      // We validate that the internal 'id' matches the document path.
-      allow create: if isSignedIn() && request.resource.data.id == recordId;
+      // Create Operation: Allow students to check in if they are signed in (can be anonymous).
+      allow create: if isSignedIn();
 
       // Write Operations: Only Admins can modify or delete existing records.
-      allow update, delete: if isExistingAdmin();
+      allow update, delete: if isAdmin();
     }
 
     // --- Default Deny ---

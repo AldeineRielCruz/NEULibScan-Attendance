@@ -16,25 +16,54 @@ import {
   School, 
   Calendar as CalendarIcon,
   ChevronLeft,
-  Loader2
+  Loader2,
+  Lock
 } from 'lucide-react';
 import Link from 'next/link';
 import DashboardCharts from '@/components/DashboardCharts';
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { AttendanceRecord } from '@/lib/attendance';
 
 export default function AdminDashboard() {
   const firestore = useFirestore();
+  const { user, isUserLoading } = useUser();
   
   const recordsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    // Only run the query if the user is authenticated, to avoid permission errors
+    if (!firestore || !user) return null;
     return collection(firestore, 'attendanceRecords');
-  }, [firestore]);
+  }, [firestore, user]);
 
-  const { data: records, isLoading } = useCollection<AttendanceRecord>(recordsQuery);
+  const { data: records, isLoading: isDataLoading } = useCollection<AttendanceRecord>(recordsQuery);
 
-  if (isLoading) {
+  if (isUserLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+          <p className="text-muted-foreground font-headline text-lg">Verifying Access...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
+        <Card className="max-w-md w-full text-center p-8 border-primary/20">
+          <Lock className="w-16 h-16 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl font-headline font-bold text-primary mb-2">Access Denied</h2>
+          <p className="text-muted-foreground mb-6">You must be logged in as an administrator to view this dashboard.</p>
+          <Link href="/">
+            <Button className="w-full">Return to Login</Button>
+          </Link>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isDataLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">
@@ -57,7 +86,7 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-2 mb-2">
               <Link href="/" className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-bold">
                 <ChevronLeft className="w-4 h-4" />
-                Back to Login
+                Back to Portal
               </Link>
             </div>
             <h1 className="text-4xl font-headline font-bold text-primary">Attendance Analytics</h1>
@@ -89,12 +118,12 @@ export default function AdminDashboard() {
           </Card>
           <Card className="border-primary/10">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Top Program</CardTitle>
+              <CardTitle className="text-sm font-medium">System Role</CardTitle>
               <School className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold truncate">Informatics</div>
-              <p className="text-xs text-muted-foreground">Highest participation</p>
+              <div className="text-xl font-bold truncate">Administrator</div>
+              <p className="text-xs text-muted-foreground">{user?.email}</p>
             </CardContent>
           </Card>
           <Card className="border-primary/10">
@@ -140,28 +169,45 @@ export default function AdminDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {[...attendanceList].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 10).map((record) => (
-                  <TableRow key={record.id} className="border-primary/5 hover:bg-accent/5">
-                    <TableCell className="font-medium font-body">{record.email}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={record.sex === 'Male' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-pink-200 text-pink-700 bg-pink-50'}>
-                        {record.sex}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-body text-muted-foreground">{record.program}</TableCell>
-                    <TableCell className="font-body text-sm">
-                      {new Date(record.timestamp).toLocaleDateString()} {new Date(record.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Badge className="bg-primary hover:bg-primary/90">Present</Badge>
+                {attendanceList.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                      No attendance records found.
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  [...attendanceList].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 10).map((record) => (
+                    <TableRow key={record.id} className="border-primary/5 hover:bg-accent/5">
+                      <TableCell className="font-medium font-body">{record.email}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={record.sex === 'Male' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-pink-200 text-pink-700 bg-pink-50'}>
+                          {record.sex}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-body text-muted-foreground">{record.program}</TableCell>
+                      <TableCell className="font-body text-sm">
+                        {new Date(record.timestamp).toLocaleDateString()} {new Date(record.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Badge className="bg-primary hover:bg-primary/90">Present</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </CardContent>
         </Card>
       </div>
     </div>
+  );
+}
+
+// Simple Button component for the error state if not imported correctly
+function Button({ className, children }: { className?: string, children: React.ReactNode }) {
+  return (
+    <button className={`bg-primary text-white py-2 px-4 rounded-md font-bold ${className}`}>
+      {children}
+    </button>
   );
 }
