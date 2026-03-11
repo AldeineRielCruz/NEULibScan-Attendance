@@ -1,6 +1,6 @@
-
 'use client';
 
+import { useState, useMemo } from 'react';
 import { 
   Bar, 
   BarChart, 
@@ -12,39 +12,76 @@ import {
   PieChart,
   Pie
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AttendanceRecord } from '@/lib/attendance';
+import { format, parseISO, startOfHour, startOfDay, startOfMonth, startOfYear } from 'date-fns';
 
 interface DashboardChartsProps {
   records: AttendanceRecord[];
 }
 
-export default function DashboardCharts({ records }: DashboardChartsProps) {
-  // Process College Program Data
-  const programData = records.reduce((acc: any, curr) => {
-    const existing = acc.find((item: any) => item.name === curr.program);
-    if (existing) {
-      existing.value += 1;
-    } else {
-      acc.push({ name: curr.program, value: 1 });
-    }
-    return acc;
-  }, []);
+type TimeScale = 'hour' | 'day' | 'month' | 'year';
 
-  // Sort by value and take top 5
-  const topPrograms = programData.sort((a: any, b: any) => b.value - a.value).slice(0, 6);
+export default function DashboardCharts({ records }: DashboardChartsProps) {
+  const [timeScale, setTimeScale] = useState<TimeScale>('hour');
+
+  // Process College Program Data
+  const programData = useMemo(() => {
+    const counts = records.reduce((acc: Record<string, number>, curr) => {
+      acc[curr.program] = (acc[curr.program] || 0) + 1;
+      return acc;
+    }, {});
+    
+    return Object.entries(counts)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6);
+  }, [records]);
 
   // Process Sex Data
-  const sexData = [
+  const sexData = useMemo(() => [
     { name: 'Male', value: records.filter(r => r.sex === 'Male').length },
     { name: 'Female', value: records.filter(r => r.sex === 'Female').length },
-  ];
+  ], [records]);
 
-  // Process Time Data (By Hour)
-  const hourlyData = Array.from({ length: 12 }, (_, i) => ({
-    hour: `${i + 8}:00`,
-    count: records.filter(r => new Date(r.timestamp).getHours() === (i + 8)).length
-  }));
+  // Process Time Data based on selected scale
+  const timeChartData = useMemo(() => {
+    if (records.length === 0) return [];
+
+    const groupMap: Record<string, number> = {};
+    
+    records.forEach(record => {
+      const date = parseISO(record.timestamp);
+      let key = '';
+      
+      switch (timeScale) {
+        case 'hour':
+          key = format(startOfHour(date), 'HH:00');
+          break;
+        case 'day':
+          key = format(startOfDay(date), 'MMM dd');
+          break;
+        case 'month':
+          key = format(startOfMonth(date), 'MMMM');
+          break;
+        case 'year':
+          key = format(startOfYear(date), 'yyyy');
+          break;
+      }
+      
+      groupMap[key] = (groupMap[key] || 0) + 1;
+    });
+
+    // For hourly, we want to ensure a range if it's today's data, but for generic records we just show existing
+    return Object.entries(groupMap)
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => {
+        // Simple string sort works for most formats here, but for Hour we want numeric
+        if (timeScale === 'hour') return a.label.localeCompare(b.label);
+        return a.label.localeCompare(b.label); // Basic chronological for simple formats
+      });
+  }, [records, timeScale]);
 
   const COLORS = ['#2F5F2F', '#93DB74', '#5F9F5F', '#ECF6EC', '#228B22'];
 
@@ -54,10 +91,11 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
       <Card className="lg:col-span-2 border-primary/10 shadow-md">
         <CardHeader>
           <CardTitle className="font-headline text-xl text-primary">Top Participation by Program</CardTitle>
+          <CardDescription>Distribution of attendance across various university colleges.</CardDescription>
         </CardHeader>
         <CardContent className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={topPrograms}>
+            <BarChart data={programData}>
               <XAxis 
                 dataKey="name" 
                 tick={{fontSize: 12, fill: 'hsl(var(--muted-foreground))'}} 
@@ -72,7 +110,7 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
                 contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
               />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                {topPrograms.map((entry: any, index: number) => (
+                {programData.map((entry: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Bar>
@@ -85,6 +123,7 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
       <Card className="border-primary/10 shadow-md">
         <CardHeader>
           <CardTitle className="font-headline text-xl text-primary">Gender Split</CardTitle>
+          <CardDescription>Ratio of male to female students.</CardDescription>
         </CardHeader>
         <CardContent className="h-80 flex flex-col items-center justify-center">
           <ResponsiveContainer width="100%" height="80%">
@@ -115,17 +154,35 @@ export default function DashboardCharts({ records }: DashboardChartsProps) {
         </CardContent>
       </Card>
 
-      {/* Hourly Trend */}
+      {/* Hierarchical Time Trends */}
       <Card className="lg:col-span-3 border-primary/10 shadow-md">
-        <CardHeader>
-          <CardTitle className="font-headline text-xl text-primary">Hourly Traffic Trend</CardTitle>
+        <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
+          <div>
+            <CardTitle className="font-headline text-xl text-primary">Attendance Time Analysis</CardTitle>
+            <CardDescription>Analyze peaks and trends across different time hierarchies.</CardDescription>
+          </div>
+          <Tabs value={timeScale} onValueChange={(val) => setTimeScale(val as TimeScale)} className="w-full md:w-auto">
+            <TabsList className="bg-primary/5 grid grid-cols-4 md:flex">
+              <TabsTrigger value="hour" className="text-xs">Hour</TabsTrigger>
+              <TabsTrigger value="day" className="text-xs">Day</TabsTrigger>
+              <TabsTrigger value="month" className="text-xs">Month</TabsTrigger>
+              <TabsTrigger value="year" className="text-xs">Year</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </CardHeader>
         <CardContent className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={hourlyData}>
-              <XAxis dataKey="hour" tick={{fontSize: 11}} axisLine={false} tickLine={false} />
+            <BarChart data={timeChartData}>
+              <XAxis 
+                dataKey="label" 
+                tick={{fontSize: 11}} 
+                axisLine={false} 
+                tickLine={false} 
+              />
               <YAxis hide />
-              <Tooltip />
+              <Tooltip 
+                contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
+              />
               <Bar dataKey="count" fill="#2F5F2F" radius={[4, 4, 0, 0]} opacity={0.8} />
             </BarChart>
           </ResponsiveContainer>
