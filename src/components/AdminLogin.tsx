@@ -5,15 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
-import { Lock, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
+import { Lock, ShieldCheck, AlertCircle, Loader2, UserPlus, LogIn } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useAuth } from '@/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function AdminLogin() {
   const router = useRouter();
   const auth = useAuth();
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [errorMessage, setErrorMessage] = useState('');
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -28,17 +29,23 @@ export default function AdminLogin() {
     try {
       if (!auth) throw new Error('Auth service not initialized');
       
-      // We must perform a real sign-in so that Firebase Security Rules 
-      // can identify the user and grant access to the dashboard data.
-      await signInWithEmailAndPassword(auth, email, password);
+      if (mode === 'signin') {
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+      }
+      
       router.push('/admin/dashboard');
     } catch (error: any) {
       setStatus('error');
-      // If user hasn't created the account yet in Firebase Console, we provide a helpful hint
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-        setErrorMessage('Invalid credentials. If this is a new setup, ensure the user "admin@neu.edu.ph" is created in your Firebase Auth console.');
+      if (error.code === 'auth/user-not-found') {
+        setErrorMessage('Account not found. Please use the "Register" mode to create your admin account.');
+      } else if (error.code === 'auth/email-already-in-use') {
+        setErrorMessage('This email is already registered. Please use "Sign In" mode.');
+      } else if (error.code === 'auth/weak-password') {
+        setErrorMessage('Password should be at least 6 characters.');
       } else {
-        setErrorMessage(error.message || 'Authentication failed. Please try again.');
+        setErrorMessage(error.message || 'Authentication failed. Please check your credentials.');
       }
     } finally {
       setStatus('idle');
@@ -51,8 +58,12 @@ export default function AdminLogin() {
         <div className="flex justify-center mb-4">
           <ShieldCheck className="w-12 h-12 text-primary" />
         </div>
-        <h2 className="text-3xl font-headline font-bold text-primary">Admin Access</h2>
-        <p className="text-muted-foreground font-body">Authorized personnel only.</p>
+        <h2 className="text-3xl font-headline font-bold text-primary">
+          {mode === 'signin' ? 'Admin Access' : 'Create Admin'}
+        </h2>
+        <p className="text-muted-foreground font-body">
+          {mode === 'signin' ? 'Authorized personnel only.' : 'Set up your administrative credentials.'}
+        </p>
       </div>
 
       {status === 'error' && (
@@ -98,15 +109,30 @@ export default function AdminLogin() {
           {status === 'loading' ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Authenticating...
+              Processing...
             </>
-          ) : 'Enter Dashboard'}
+          ) : (
+            mode === 'signin' ? 'Enter Dashboard' : 'Register Account'
+          )}
         </Button>
       </form>
 
-      <div className="pt-4 flex items-center justify-center text-xs text-muted-foreground gap-2">
-        <Lock className="w-4 h-4" />
-        <span>Secure Administrative Gateway</span>
+      <div className="flex flex-col gap-4">
+        <button
+          onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
+          className="text-sm text-primary hover:underline font-bold flex items-center justify-center gap-2"
+        >
+          {mode === 'signin' ? (
+            <><UserPlus className="w-4 h-4" /> No account? Register here</>
+          ) : (
+            <><LogIn className="w-4 h-4" /> Already have an account? Sign In</>
+          )}
+        </button>
+
+        <div className="pt-4 flex items-center justify-center text-xs text-muted-foreground gap-2 border-t border-primary/10">
+          <Lock className="w-4 h-4" />
+          <span>Secure Administrative Gateway</span>
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { 
   Users, 
   Clock, 
@@ -22,7 +23,7 @@ import {
 import Link from 'next/link';
 import DashboardCharts from '@/components/DashboardCharts';
 import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, query, orderBy } from 'firebase/firestore';
 import { AttendanceRecord } from '@/lib/attendance';
 
 export default function AdminDashboard() {
@@ -30,9 +31,9 @@ export default function AdminDashboard() {
   const { user, isUserLoading } = useUser();
   
   const recordsQuery = useMemoFirebase(() => {
-    // Only run the query if the user is authenticated, to avoid permission errors
     if (!firestore || !user) return null;
-    return collection(firestore, 'attendanceRecords');
+    // We query the attendanceRecords collection ordered by the timestamp
+    return query(collection(firestore, 'attendanceRecords'), orderBy('timestamp', 'desc'));
   }, [firestore, user]);
 
   const { data: records, isLoading: isDataLoading } = useCollection<AttendanceRecord>(recordsQuery);
@@ -55,7 +56,7 @@ export default function AdminDashboard() {
           <Lock className="w-16 h-16 text-primary mx-auto mb-4" />
           <h2 className="text-2xl font-headline font-bold text-primary mb-2">Access Denied</h2>
           <p className="text-muted-foreground mb-6">You must be logged in as an administrator to view this dashboard.</p>
-          <Link href="/">
+          <Link href="/" className="w-full">
             <Button className="w-full">Return to Login</Button>
           </Link>
         </Card>
@@ -176,7 +177,7 @@ export default function AdminDashboard() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  [...attendanceList].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 10).map((record) => (
+                  attendanceList.map((record) => (
                     <TableRow key={record.id} className="border-primary/5 hover:bg-accent/5">
                       <TableCell className="font-medium font-body">{record.email}</TableCell>
                       <TableCell>
@@ -200,14 +201,5 @@ export default function AdminDashboard() {
         </Card>
       </div>
     </div>
-  );
-}
-
-// Simple Button component for the error state if not imported correctly
-function Button({ className, children }: { className?: string, children: React.ReactNode }) {
-  return (
-    <button className={`bg-primary text-white py-2 px-4 rounded-md font-bold ${className}`}>
-      {children}
-    </button>
   );
 }
