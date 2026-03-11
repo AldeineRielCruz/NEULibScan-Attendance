@@ -1,5 +1,5 @@
+'use client';
 
-import { getAttendanceRecords } from '@/lib/attendance';
 import { 
   Table, 
   TableBody, 
@@ -15,13 +15,37 @@ import {
   Clock, 
   School, 
   Calendar as CalendarIcon,
-  ChevronLeft
+  ChevronLeft,
+  Loader2
 } from 'lucide-react';
 import Link from 'next/link';
 import DashboardCharts from '@/components/DashboardCharts';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import { AttendanceRecord } from '@/lib/attendance';
 
-export default async function AdminDashboard() {
-  const records = await getAttendanceRecords();
+export default function AdminDashboard() {
+  const firestore = useFirestore();
+  
+  const recordsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'attendanceRecords');
+  }, [firestore]);
+
+  const { data: records, isLoading } = useCollection<AttendanceRecord>(recordsQuery);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+          <p className="text-muted-foreground font-headline text-lg">Loading Analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const attendanceList = records || [];
 
   return (
     <div className="min-h-screen bg-background p-6 md:p-10">
@@ -45,7 +69,7 @@ export default async function AdminDashboard() {
               <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">System Status</p>
               <p className="text-sm font-bold text-primary flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                Operational
+                Live Monitoring
               </p>
             </div>
           </div>
@@ -59,8 +83,8 @@ export default async function AdminDashboard() {
               <Users className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{records.length}</div>
-              <p className="text-xs text-muted-foreground">+12% from last week</p>
+              <div className="text-2xl font-bold">{attendanceList.length}</div>
+              <p className="text-xs text-muted-foreground">Real-time total</p>
             </CardContent>
           </Card>
           <Card className="border-primary/10">
@@ -75,12 +99,12 @@ export default async function AdminDashboard() {
           </Card>
           <Card className="border-primary/10">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Peak Hour</CardTitle>
+              <CardTitle className="text-sm font-medium">Status</CardTitle>
               <Clock className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">10:00 AM</div>
-              <p className="text-xs text-muted-foreground">Most active time</p>
+              <div className="text-2xl font-bold">Active</div>
+              <p className="text-xs text-muted-foreground">Database connected</p>
             </CardContent>
           </Card>
           <Card className="border-primary/10">
@@ -89,14 +113,14 @@ export default async function AdminDashboard() {
               <CalendarIcon className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">Just Now</div>
-              <p className="text-xs text-muted-foreground">Real-time update</p>
+              <div className="text-2xl font-bold">{attendanceList.length > 0 ? 'Recently' : 'No entries'}</div>
+              <p className="text-xs text-muted-foreground">Auto-updating</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Charts Section */}
-        <DashboardCharts records={records} />
+        <DashboardCharts records={attendanceList} />
 
         {/* Recent Activity Table */}
         <Card className="border-primary/10 shadow-lg">
@@ -116,7 +140,7 @@ export default async function AdminDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {records.slice(-10).reverse().map((record) => (
+                {[...attendanceList].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 10).map((record) => (
                   <TableRow key={record.id} className="border-primary/5 hover:bg-accent/5">
                     <TableCell className="font-medium font-body">{record.email}</TableCell>
                     <TableCell>

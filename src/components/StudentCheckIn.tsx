@@ -12,27 +12,56 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { submitCheckIn } from '@/app/actions';
-import { COLLEGE_PROGRAMS } from '@/lib/attendance';
+import { COLLEGE_PROGRAMS, AttendanceRecord } from '@/lib/attendance';
 import { BookOpen, GraduationCap, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useFirestore } from '@/firebase';
+import { doc, collection } from 'firebase/firestore';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 export default function StudentCheckIn() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const firestore = useFirestore();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus('loading');
     setErrorMessage('');
 
+    if (!firestore) {
+      setStatus('error');
+      setErrorMessage('Database service not available.');
+      return;
+    }
+
     const formData = new FormData(event.currentTarget);
-    
+    const email = formData.get('email') as string;
+    const sex = formData.get('sex') as 'Male' | 'Female';
+    const program = formData.get('program') as any;
+
+    if (!email || !email.endsWith('@neu.edu.ph')) {
+      setStatus('error');
+      setErrorMessage('Invalid email domain. Please use your @neu.edu.ph address.');
+      return;
+    }
+
     try {
-      await submitCheckIn(formData);
+      const recordId = Math.random().toString(36).substr(2, 9);
+      const attendanceRef = doc(firestore, 'attendanceRecords', recordId);
+      
+      const recordData: AttendanceRecord = {
+        id: recordId,
+        email,
+        sex,
+        program,
+        timestamp: new Date().toISOString(),
+      };
+
+      setDocumentNonBlocking(attendanceRef, recordData, { merge: true });
+      
       setStatus('success');
       (event.target as HTMLFormElement).reset();
-      // Keep success message for 5 seconds then go back to idle
       setTimeout(() => setStatus('idle'), 5000);
     } catch (error: any) {
       setStatus('error');
