@@ -7,6 +7,7 @@ It is intended for recording attendances within a site, supposedly from stationa
 ## *NEULib Scan Login Screen*
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ed88f746-c3fb-4c87-9691-4184a0eba236" />  
 
+
 Like a google form there is aas a tab for logging in to the admin dashboard page.  
 It uses a Firebox database (backend firebase) which has real-time viewing of the data without refreshing the admin dashboard page.
 
