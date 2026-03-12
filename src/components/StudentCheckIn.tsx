@@ -182,7 +182,7 @@ export default function StudentCheckIn() {
 
       <div className="pt-4 flex items-center justify-center text-xs text-muted-foreground gap-2">
         <GraduationCap className="w-4 h-4" />
-        <span>University of Excellence Presence Tracker</span>
+        <span>New Era University Library Attendance Tracker</span>
       </div>
     </div>
   );
