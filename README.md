@@ -1,8 +1,8 @@
 ## NEULib Scan - Library attendance system with dashboard
 **NEULib Scan is an attendance web app intended for keeping track of the students that utilize the university's library.**  
 
-An attendance web app that records NEU institional emails along with their sex and college program.  
-It is intended for simple attendance and typing, simillar to a google form.
+An attendance web app that records NEU institional emails along with their gender and college program.  
+It is intended for simple attendance and typing, simillar to a google form.  
 Like a google form there is aas a tab for logging in to the admin dashboard page.  
 It uses a Firebox database (backend firebase) which has real-time viewing of the data without refreshing the admin dashboard page.  
 ## *NEULib Scan Login Screen*
