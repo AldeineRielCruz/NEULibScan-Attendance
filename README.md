@@ -11,7 +11,16 @@ It is intended for recording attendances within a site, supposedly from stationa
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6dea290e-5beb-4477-b739-fc5b8a352d04" />
 For veiwing statistics of student attendences in the library, there is an admin panel to view these stats.  
 
-It uses the inbuilt Firebox database (backend of firebase studio) which has real-time viewing of the data without refreshing the admin dashboard page.
+It uses the inbuilt Firebox database (backend of firebase studio) which has real-time viewing of the data without refreshing the admin dashboard page.  
+<details>
+  <summary>Admin Password</summary>
+  
+   ```javascript
+  const PREDEFINED_ADMIN = 'admin@neu.edu.ph';
+  const PREDEFINED_PASS = 'adminPassword';
+  ```
+  
+</details>
 
 ## Link to the website for viewing  
 [**NEULIB SCAN**](https://9000-firebase-studio-1773239877998.cluster-osvg2nzmmzhzqqjio6oojllbg4.cloudworkstations.dev)  
@@ -28,6 +37,6 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 - Firebase (website)
 - Firebox (database)
 
-##Documentation  
-*This section for hereon is 
-
+## Documentation  
+*This section past this point is the documentation section, which documents and briefly explains the componenets within the web application*
+## BackEnd Schema
