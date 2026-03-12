@@ -9,12 +9,15 @@ It is intended for recording attendances within a site, supposedly from stationa
 
 ## NEULib Scan Admin Dashboard Screen* 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6dea290e-5beb-4477-b739-fc5b8a352d04" />
-For veiwing statistics of studend attendences in a library, there is an admin panel to view these stats.  
+For veiwing statistics of student attendences in the library, there is an admin panel to view these stats.  
 It uses a Firebox database (backend firebase) which has real-time viewing of the data without refreshing the admin dashboard page.
 
 ## Link to the website for viewing  
 [**NEULIB SCAN**](https://9000-firebase-studio-1773239877998.cluster-osvg2nzmmzhzqqjio6oojllbg4.cloudworkstations.dev)  
-*The site only opens when a computer has access to the workspace hence why it might be down in specific times.*  
+*The site only opens when a computer has access to the workspace as it hasn't reached proper hosting, hence why it might be down in specific times.*  
+**You can also clone the repository and run this locally using the "Firebase Local Emulator Suite" refer to this link after cloning the repo:  
+[Install, configure and integrate Local Emulator Suite](https://firebase.google.com/docs/emulator-suite/install_and_configure)
+
 ## The Website was made with the following frameworks: 
 - NextJs
 - React
@@ -23,4 +26,6 @@ It uses a Firebox database (backend firebase) which has real-time viewing of the
 - Firebase (website)
 - Firebox (database)
 
+##Documentation  
+*This section for hereon is 
 
