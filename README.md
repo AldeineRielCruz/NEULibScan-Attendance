@@ -1,6 +1,6 @@
 ## NEULib Scan - Library attendance system with dashboard
 **#NEULib Scan is an attendance web app intended for keeping track of the students that utilize the university's library.**
-## NEULib Scan Screenshots
+*NEULib Scan Login Screen*
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ed88f746-c3fb-4c87-9691-4184a0eba236" />
 
 Website was made with NextJS starter in Firebase Studio.
