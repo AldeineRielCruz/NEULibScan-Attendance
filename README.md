@@ -43,7 +43,7 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 ## Website Flow
 *NEULIB Scan* opens right away with the login screen where students would input their email, sex, and their college program.  
 
-### - The three input/form fields  
+- The three input/form fields  
 
-####   -  **Email field**
+-- **Email field**
 
