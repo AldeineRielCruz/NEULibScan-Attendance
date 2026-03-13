@@ -7,7 +7,7 @@ It is intended for recording attendances within a site, supposedly from stationa
 ### *NEULib Scan Login Screen*
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ed88f746-c3fb-4c87-9691-4184a0eba236" />  
 
-### NEULib Scan Admin Dashboard Screen* 
+### NEULib Scan Admin Dashboard Screen 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6dea290e-5beb-4477-b739-fc5b8a352d04" />
 For veiwing statistics of student attendences in the library, there is an admin panel to view these stats.  
 
