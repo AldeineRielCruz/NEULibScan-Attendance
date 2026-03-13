@@ -46,5 +46,5 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 ### The three input/form fields  
 
 - **Email field**
- - The Email field makes the user input their i
+   - The Email field makes the user input their i
 
