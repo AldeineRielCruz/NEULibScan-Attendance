@@ -24,7 +24,7 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 
 ## Link to the website for viewing  
 [**NEULIB SCAN**](https://9000-firebase-studio-1773239877998.cluster-osvg2nzmmzhzqqjio6oojllbg4.cloudworkstations.dev)  
-*The site only opens when a computer has access to the workspace as it hasn't reached proper hosting, hence why it might be down in specific times.*   
+*The site only opens when a computer has access to the workspace as it hasn't reached proper hosting, so it would be open only on presentation purposes.*   
 
 **You can also clone the repository and run this locally using the "Firebase Local Emulator Suite"; refer to this link after cloning the repo:**    
 [Install, configure and integrate Local Emulator Suite](https://firebase.google.com/docs/emulator-suite/install_and_configure)
@@ -37,6 +37,8 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 - Firebase (website)
 - Firebox (database)
 
-## Documentation  
-*This section past this point is the documentation section, which documents and briefly explains the componenets within the web application*
-## BackEnd Schema
+# Documentation  
+*This section past this point is the documentation section, which documents and briefly explains the componenets within the web application*  
+
+## Website Flow
+*NEULIB Scan* starts with right away with the login screen.
