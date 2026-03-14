@@ -278,7 +278,7 @@ attendanceList.map((record) => (
 ...
 ```
 
-- Sex Chart
+- Sex Chart  
 The chart shows the amount of students that are male or female that are logged in within the system, uses a stylized pie chart.
 AdminDashboard.tsx
 ```javascript
@@ -324,7 +324,7 @@ AdminDashboard.tsx
           </div>
         </CardContent>
 ```
-- College Program Chart
+- College Program Chart  
 Shows the amount of students that within a specific college Program (out of the 16) that are logged in within the system, uses a standard bar chart.
 AdminDashboard.tsx
 ```javascript
@@ -364,7 +364,7 @@ AdminDashboard.tsx
         </CardContent>
       </Card>
 ```
-- Top times and days Chart
+- Top times and days Chart  
 Shows the times by categories of Hour, Days, Month, Year. Slightly hierarchical between days to years, but hours applies all the days as to see a trending hour of login despite the day.
 AdminDashboard.tsx
 ```javscript
