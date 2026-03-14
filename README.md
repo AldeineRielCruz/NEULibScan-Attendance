@@ -118,6 +118,7 @@ export const COLLEGE_PROGRAMS: CollegeProgram[] = [
 ];
 ```
 **The handlesubmit function** configures all the data for the backend sending which occurs after the student presses 'Check in now' (or checks if there are any errors on the db or inputs).  
+If successful, inputs the given values and adds a random ID number; along with the date it was sent.  
 ~/src/app/components/StudentCheckIn.tsx  
 ```javascript
  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -233,4 +234,181 @@ router.push('/admin/dashboard');
 ```
 
 ## Admin Dashboard
+A final check takes place when someone enters the address without proper authorization.  
+~src/app/admin/dashboard/page.tsx  
+```javascript
+ if (isUserLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+          <p className="text-muted-foreground font-headline text-lg">Verifying Access...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
+        <Card className="max-w-md w-full text-center p-8 border-primary/20">
+          <Lock className="w-16 h-16 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl font-headline font-bold text-primary mb-2">Access Denied</h2>
+          <p className="text-muted-foreground mb-6">You must be logged in as an administrator to view this dashboard.</p>
+          <Link href="/" className="w-full">
+            <Button className="w-full">Return to Login</Button>
+          </Link>
+        </Card>
+      </div>
+    );
+  }
+```
+The Admin Dashboard shows the data within charts based on 'Attendance.ts' file and the intial data inserted based from the login screen.  
+
+These 3 charts show the login data in a quantitative form, all thanks to the imported 'DashBoardCharts' which styled and made the charts possible.    
+These are the records being instantizated within these imports.
+```javascript
+import DashboardCharts from '@/components/DashboardCharts';
+...
+<DashboardCharts records={attendanceList} />
+...
+attendanceList.map((record) => (
+                    <TableRow key={record.id} className="border-primary/5 hover:bg-accent/5">
+                      <TableCell className="font-medium font-body">{record.studentEmail}</TableCell>
+...
+```
+
+- Sex Chart
+The chart shows the amount of students that are male or female that are logged in within the system, uses a stylized pie chart.
+AdminDashboard.tsx
+```javascript
+                    <TableCell>
+                        <Badge variant="outline" className={record.sex === 'Male' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-pink-200 text-pink-700 bg-pink-50'}>
+                          {record.sex}
+                        </Badge>
+                      </TableCell>
+```
+~/src/components/DashboardCharts.tsx  
+```javascript
+ {/* Sex Distribution */}
+      <Card className="border-primary/10 shadow-md">
+        <CardHeader>
+          <CardTitle className="font-headline text-xl text-primary">Gender Split</CardTitle>
+          <CardDescription>Ratio of male to female students.</CardDescription>
+        </CardHeader>
+        <CardContent className="h-96 flex flex-col items-center justify-center">
+          <ResponsiveContainer width="100%" height="80%">
+            <PieChart>
+              <Pie
+                data={sexData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                paddingAngle={5}
+                dataKey="value"
+              >
+                <Cell fill="#2F5F2F" />
+                <Cell fill="#93DB74" />
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="flex gap-6 mt-4">
+            {sexData.map((item, i) => (
+              <div key={item.name} className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{backgroundColor: i === 0 ? '#2F5F2F' : '#93DB74'}} />
+                <span className="text-sm font-medium">{item.name}: {item.value}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+```
+- College Program Chart
+Shows the amount of students that within a specific college Program (out of the 16) that are logged in within the system, uses a standard bar chart.
+AdminDashboard.tsx
+```javascript
+   <TableCell className="font-body text-muted-foreground">{record.collegeProgram}</TableCell>
+```
+~/src/components/DashboardCharts.tsx  
+```javascript
+ {/* College Program Distribution - Showing all programs */}
+      <Card className="lg:col-span-2 border-primary/10 shadow-md">
+        <CardHeader>
+          <CardTitle className="font-headline text-xl text-primary">Participation by Program</CardTitle>
+          <CardDescription>Comprehensive comparison of attendance across all university colleges.</CardDescription>
+        </CardHeader>
+        <CardContent className="h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={programData} layout="vertical" margin={{ left: 40, right: 20 }}>
+              <XAxis type="number" hide />
+              <YAxis 
+                type="category" 
+                dataKey="name" 
+                width={120}
+                tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}}
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip 
+                cursor={{fill: 'rgba(47, 95, 47, 0.05)'}}
+                contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
+              />
+              <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={15}>
+                {programData.map((entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+```
+- Top times and days Chart
+Shows the times by categories of Hour, Days, Month, Year. Slightly hierarchical between days to years, but hours applies all the days as to see a trending hour of login despite the day.
+AdminDashboard.tsx
+```javscript
+ <TableCell className="font-body text-sm">
+                        {new Date(record.checkInDateTime).toLocaleDateString()} {new Date(record.checkInDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </TableCell>
+```
+~/src/components/DashboardCharts.tsx  
+```javascript
+{/* Hierarchical Time Trends */}
+      <Card className="lg:col-span-3 border-primary/10 shadow-md">
+        <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
+          <div>
+            <CardTitle className="font-headline text-xl text-primary">Attendance Time Analysis</CardTitle>
+            <CardDescription>Analyze peaks and trends across a continuous timeline.</CardDescription>
+          </div>
+          <Tabs value={timeScale} onValueChange={(val) => setTimeScale(val as TimeScale)} className="w-full md:w-auto">
+            <TabsList className="bg-primary/5 grid grid-cols-4 md:flex">
+              <TabsTrigger value="hour" className="text-xs">Hour</TabsTrigger>
+              <TabsTrigger value="day" className="text-xs">Day</TabsTrigger>
+              <TabsTrigger value="month" className="text-xs">Month</TabsTrigger>
+              <TabsTrigger value="year" className="text-xs">Year</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </CardHeader>
+        <CardContent className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={timeChartData}>
+              <XAxis 
+                dataKey="label" 
+                tick={{fontSize: 10}} 
+                axisLine={false} 
+                tickLine={false} 
+                interval={timeScale === 'hour' ? 2 : 0}
+              />
+              <YAxis hide />
+              <Tooltip 
+                contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
+              />
+              <Bar dataKey="count" fill="#2F5F2F" radius={[4, 4, 0, 0]} opacity={0.8} />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+```
+
 
