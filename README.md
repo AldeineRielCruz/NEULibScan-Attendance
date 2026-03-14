@@ -273,24 +273,12 @@ These are the records being instantizated within these imports.
 ```javascript
 import DashboardCharts from '@/components/DashboardCharts';
 ...
-<DashboardCharts records={attendanceList} />
-...
-attendanceList.map((record) => (
-                    <TableRow key={record.id} className="border-primary/5 hover:bg-accent/5">
-                      <TableCell className="font-medium font-body">{record.studentEmail}</TableCell>
-...
+ {/* Charts Section */}
+        <DashboardCharts records={attendanceList} />
 ```
 
 #### Sex Chart  
 The chart shows the amount of students that are male or female that are logged in within the system, uses a stylized pie chart.
-AdminDashboard.tsx
-```javascript
-                    <TableCell>
-                        <Badge variant="outline" className={record.sex === 'Male' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-pink-200 text-pink-700 bg-pink-50'}>
-                          {record.sex}
-                        </Badge>
-                      </TableCell>
-```
 ~/src/components/DashboardCharts.tsx  
 ```javascript
  {/* Sex Distribution */}
@@ -329,10 +317,6 @@ AdminDashboard.tsx
 ```
 #### College Program Chart  
 Shows the amount of students that within a specific college Program (out of the 16) that are logged in within the system, uses a standard bar chart.
-AdminDashboard.tsx
-```javascript
-   <TableCell className="font-body text-muted-foreground">{record.collegeProgram}</TableCell>
-```
 ~/src/components/DashboardCharts.tsx  
 ```javascript
  {/* College Program Distribution - Showing all programs */}
@@ -369,12 +353,6 @@ AdminDashboard.tsx
 ```
 #### Top times and days Chart  
 Shows the times by categories of Hour, Days, Month, Year. Slightly hierarchical between days to years, but hours applies all the days as to see a trending hour of login despite the day.
-AdminDashboard.tsx
-```javscript
- <TableCell className="font-body text-sm">
-                        {new Date(record.checkInDateTime).toLocaleDateString()} {new Date(record.checkInDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </TableCell>
-```
 ~/src/components/DashboardCharts.tsx  
 ```javascript
 {/* Hierarchical Time Trends */}
@@ -413,5 +391,51 @@ AdminDashboard.tsx
         </CardContent>
       </Card>
 ```
+### Recent Activity Table  
+The Recent Activity Table shows the data of the most recent logged students as to see legitimate data within a table form, seperate into 5 columns: [Email, Sex, College Program, Date & Time, Status].   
+~src/app/admin/dashboard/page.tsx 
+```javascript
+         <TableHeader>
+                <TableRow className="bg-muted/50 hover:bg-muted/50 border-primary/10">
+                  <TableHead className="font-bold">Student Email</TableHead>
+                  <TableHead className="font-bold">Sex</TableHead>
+                  <TableHead className="font-bold">College Program</TableHead>
+                  <TableHead className="font-bold">Date & Time</TableHead>
+                  <TableHead className="text-right font-bold">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+```
+If there are no records found, it should display the message 'No attendance records found' on the table.  
+```javascript
+                {attendanceList.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                      No attendance records found.
+                    </TableCell>
+                  </TableRow>
+```
+Else, it should display the mentioned columns and their data. 
+In the Sex column, Male and Female have their own seperate badges for styling. Date formatting is enabled for the date column. And the Status will always be Present with a green badge; All other columns are normally displayed.  
+```javascript
+ attendanceList.map((record) => (
+                    <TableRow key={record.id} className="border-primary/5 hover:bg-accent/5">
+                      <TableCell className="font-medium font-body">{record.studentEmail}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={record.sex === 'Male' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-pink-200 text-pink-700 bg-pink-50'}>
+                          {record.sex}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-body text-muted-foreground">{record.collegeProgram}</TableCell>
+                      <TableCell className="font-body text-sm">
+                        {new Date(record.checkInDateTime).toLocaleDateString()} {new Date(record.checkInDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Badge className="bg-primary hover:bg-primary/90">Present</Badge>
+                      </TableCell>
+                    </TableRow>
+```
+### Other Elements
+
+
 
 
