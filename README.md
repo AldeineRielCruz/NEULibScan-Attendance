@@ -119,7 +119,7 @@ export const COLLEGE_PROGRAMS: CollegeProgram[] = [
 ```
 ### **The handlesubmit function**  
 configures all the data for the backend sending which occurs after the student presses 'Check in now' (or checks if there are any errors on the db or inputs).  
-If successful, inputs the given values and adds a random ID number; along with the date it was sent.  
+If successful, inputs the given values and adds a random ID number; along with the date it was sent.   
 ~/src/app/components/StudentCheckIn.tsx  
 ```javascript
  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -168,8 +168,8 @@ If successful, inputs the given values and adds a random ID number; along with t
   }
 
 ```
-If the login was successful, it returns a confirm message and prompts the student to return to the main screen to login another.  
-~/src/app/components/StudentCheckIn.tsx
+If the login was successful, it returns a confirm message and prompts the student to return to the main screen to login another.   
+~/src/app/components/StudentCheckIn.tsx  
 ```javascript
 if (status === 'success') {
     return (
@@ -235,7 +235,7 @@ router.push('/admin/dashboard');
 ```
 
 ### Admin Dashboard
-A final check takes place when someone enters the address without proper authorization.  
+A final check takes place when someone enters the address without proper authorization.   
 ~src/app/admin/dashboard/page.tsx  
 ```javascript
  if (isUserLoading) {
@@ -269,7 +269,7 @@ The Admin Dashboard shows the data within charts based on 'Attendance.ts' file a
 ### The Dashboard Charts  
 
 These 3 charts show the login data in a quantitative form, all thanks to the imported 'DashBoardCharts' which styled and made the charts possible.    
-These are the records being instantizated within these imports.
+These are the records being instantizated within these imports.  
 ```javascript
 import DashboardCharts from '@/components/DashboardCharts';
 ...
@@ -278,7 +278,7 @@ import DashboardCharts from '@/components/DashboardCharts';
 ```
 
 #### Sex Chart  
-The chart shows the amount of students that are male or female that are logged in within the system, uses a stylized pie chart.
+The chart shows the amount of students that are male or female that are logged in within the system, uses a stylized pie chart.  
 ~/src/components/DashboardCharts.tsx  
 ```javascript
  {/* Sex Distribution */}
@@ -316,7 +316,7 @@ The chart shows the amount of students that are male or female that are logged i
         </CardContent>
 ```
 #### College Program Chart  
-Shows the amount of students that within a specific college Program (out of the 16) that are logged in within the system, uses a standard bar chart.
+Shows the amount of students that within a specific college Program (out of the 16) that are logged in within the system, uses a standard bar chart.  
 ~/src/components/DashboardCharts.tsx  
 ```javascript
  {/* College Program Distribution - Showing all programs */}
@@ -352,7 +352,7 @@ Shows the amount of students that within a specific college Program (out of the 
       </Card>
 ```
 #### Top times and days Chart  
-Shows the times by categories of Hour, Days, Month, Year. Slightly hierarchical between days to years, but hours applies all the days as to see a trending hour of login despite the day.
+Shows the times by categories of Hour, Days, Month, Year. Slightly hierarchical between days to years, but hours applies all the days as to see a trending hour of login despite the day.  
 ~/src/components/DashboardCharts.tsx  
 ```javascript
 {/* Hierarchical Time Trends */}
@@ -392,7 +392,7 @@ Shows the times by categories of Hour, Days, Month, Year. Slightly hierarchical 
       </Card>
 ```
 ### Recent Activity Table  
-The Recent Activity Table shows the data of the most recent logged students as to see legitimate data within a table form, seperate into 5 columns: [Email, Sex, College Program, Date & Time, Status].   
+The Recent Activity Table shows the data of the most recent logged students as to see legitimate data within a table form, seperate into 5 columns: [Email, Sex, College Program, Date & Time, Status].     
 ~src/app/admin/dashboard/page.tsx 
 ```javascript
          <TableHeader>
