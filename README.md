@@ -414,7 +414,7 @@ If there are no records found, it should display the message 'No attendance reco
                     </TableCell>
                   </TableRow>
 ```
-Else, it should display the mentioned columns and their data. 
+Else, it should display the mentioned columns and their data.  
 In the Sex column, Male and Female have their own seperate badges for styling. Date formatting is enabled for the date column. And the Status will always be Present with a green badge; All other columns are normally displayed.  
 ```javascript
  attendanceList.map((record) => (
