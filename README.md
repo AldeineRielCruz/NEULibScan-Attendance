@@ -55,4 +55,63 @@ The Email field inputs a student's institutional email. Similar to an 'email' in
       return;
     }
 ```
+- **Sex RadioGroup Choice**
+The second input requires what the Sex of the student is, it uses two RadioGroups (2 circle chocies) to easily pick between the two.  
+```javascript
+<div className="space-y-2">
+          <Label className="font-body font-bold">Sex</Label>
+          <RadioGroup name="sex" defaultValue="Male" className="flex space-x-4" disabled={status === 'loading'}>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Male" id="male" />
+              <Label htmlFor="male">Male</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Female" id="female" />
+              <Label htmlFor="female">Female</Label>
+            </div>
+```
+- **College Program Dropdown**
+The last input field is a dropdown menu that makes the student pick their assigned college program (16 choices).  
+```
+ <div className="space-y-2">
+          <Label htmlFor="program" className="font-body font-bold">College Program</Label>
+          <Select name="program" required disabled={status === 'loading'}>
+            <SelectTrigger className="border-primary/20">
+              <SelectValue placeholder="Select your program" />
+            </SelectTrigger>
+            <SelectContent>
+              {COLLEGE_PROGRAMS.map((program) => (
+                <SelectItem key={program} value={program}>
+                  {program}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+```
+Notice the content is a .map function, this was imported from a seperate file where all the college programs were labeled.  
+```
+import { COLLEGE_PROGRAMS, AttendanceRecord } from '@/lib/attendance';
+```
+attendance.ts
+```
+export const COLLEGE_PROGRAMS: CollegeProgram[] = [
+  'Accountancy',
+  'Agriculture',
+  'Arts and Science',
+  'Business Administration',
+  'Communication',
+  'Informatics and computing studies',
+  'Criminology',
+  'Education',
+  'Engineering and Architecture',
+  'Medical Technology',
+  'Midwifery',
+  'Music',
+  'Nursing',
+  'Physical Therapy',
+  'Respiratory Therapy',
+  'International Relations'
+];
+```
 
