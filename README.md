@@ -45,8 +45,8 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 
 ### The three input/form fields  
 
-- **Email field**
-The Email field inputs a student's institutional email. Similar to an 'email' input field, it requires the email address of the school: '@neu.edu.ph' for it to be a valid input, if it doesn't it will show an alert.
+- **Email field**  
+The Email field inputs a student's institutional email. Similar to an 'email' input field, it requires the email address of the school: '@neu.edu.ph' for it to be a valid input, if it doesn't it will show an error message.
 
  ```javascript
  if (!email || !email.endsWith('@neu.edu.ph')) {
