@@ -45,7 +45,7 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 
 ### The main Login Screen
 
-- **Email field**  
+#### **Email field**  
 The Email field inputs a student's institutional email. Similar to an 'email' input field, it requires the email address of the school: '@neu.edu.ph' for it to be a valid input, if it doesn't it will show an error message.
 
 ~/src/app/components/StudentCheckIn.tsx
@@ -56,7 +56,7 @@ The Email field inputs a student's institutional email. Similar to an 'email' in
       return;
     }
 ```
-- **Sex RadioGroup Choice**
+#### **Sex RadioGroup Choice**
 The second input requires what the Sex of the student is, it uses two RadioGroups (2 circle chocies) to easily pick between the two.
 ~/src/app/components/StudentCheckIn.tsx  
 ```javascript
@@ -72,7 +72,7 @@ The second input requires what the Sex of the student is, it uses two RadioGroup
               <Label htmlFor="female">Female</Label>
             </div>
 ```
-- **College Program Dropdown**
+#### **College Program Dropdown**
 The last input field is a dropdown menu that makes the student pick their assigned college program (16 choices).
 ~/src/app/components/StudentCheckIn.tsx  
 ```javascript
@@ -117,7 +117,8 @@ export const COLLEGE_PROGRAMS: CollegeProgram[] = [
   'International Relations'
 ];
 ```
-**The handlesubmit function** configures all the data for the backend sending which occurs after the student presses 'Check in now' (or checks if there are any errors on the db or inputs).  
+### **The handlesubmit function**  
+configures all the data for the backend sending which occurs after the student presses 'Check in now' (or checks if there are any errors on the db or inputs).  
 If successful, inputs the given values and adds a random ID number; along with the date it was sent.  
 ~/src/app/components/StudentCheckIn.tsx  
 ```javascript
@@ -193,7 +194,7 @@ if (status === 'success') {
     );
   }
 ```
-## The admin portal tab  
+### The Admin portal tab  
 The admin portal is a seperate tab that can be found on the main card component, there are two input fields required to login.  
 - **Email and Password input**
 In contrast to the main student login, it no longer checks for the institional email despite the placeholder saying so, it just prioritizes a defined email and password for the login.
@@ -233,7 +234,7 @@ If the login succeeds and all conditionals of denial are not met, it will route 
 router.push('/admin/dashboard');
 ```
 
-## Admin Dashboard
+### Admin Dashboard
 A final check takes place when someone enters the address without proper authorization.  
 ~src/app/admin/dashboard/page.tsx  
 ```javascript
@@ -265,6 +266,8 @@ A final check takes place when someone enters the address without proper authori
 ```
 The Admin Dashboard shows the data within charts based on 'Attendance.ts' file and the intial data inserted based from the login screen.  
 
+### The Dashboard Charts  
+
 These 3 charts show the login data in a quantitative form, all thanks to the imported 'DashBoardCharts' which styled and made the charts possible.    
 These are the records being instantizated within these imports.
 ```javascript
@@ -278,7 +281,7 @@ attendanceList.map((record) => (
 ...
 ```
 
-- Sex Chart  
+#### Sex Chart  
 The chart shows the amount of students that are male or female that are logged in within the system, uses a stylized pie chart.
 AdminDashboard.tsx
 ```javascript
@@ -324,7 +327,7 @@ AdminDashboard.tsx
           </div>
         </CardContent>
 ```
-- College Program Chart  
+#### College Program Chart  
 Shows the amount of students that within a specific college Program (out of the 16) that are logged in within the system, uses a standard bar chart.
 AdminDashboard.tsx
 ```javascript
@@ -364,7 +367,7 @@ AdminDashboard.tsx
         </CardContent>
       </Card>
 ```
-- Top times and days Chart  
+#### Top times and days Chart  
 Shows the times by categories of Hour, Days, Month, Year. Slightly hierarchical between days to years, but hours applies all the days as to see a trending hour of login despite the day.
 AdminDashboard.tsx
 ```javscript
