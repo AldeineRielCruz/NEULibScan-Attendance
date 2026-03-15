@@ -9,8 +9,19 @@ It is intended for recording attendances within a site, supposedly from stationa
   - [Login Screen](#NEULib-Scan-Login-Screen)
   - [Dashboard Screen](#NEULib-Scan-Admin-Dashboard-Screen)
   - [Firebase Console](#Firebase-Console)
-
-
+- [**Website Viewing/How to use Repo**](#Link-to-the-website-for-viewing)
+- [**Frameworks**](#The-Website-was-made-with-the-following-frameworks:)
+- [**Documentation**](#Documentation)
+  - [Main Login Screen](#Firebase-Console)
+    - [Email](#Email-field)
+    - [Sex](#Sex-radiogroup-choice)
+    - [College Programs](#College-Program-Dropdown)
+    - [HandleSumbit button](#The-handlesubmit-function)
+  - [Admin Portal](#The-Admin-Portal-Tab)
+  - [Admin Dashboard](#Admin-Dashboard)
+    -[Dashboard Charts](#The-Dashboard-Charts)
+      -[Sex Distribution](#Sex-Distribution-Chart)
+    
 ### *NEULib Scan Login Screen*
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ed88f746-c3fb-4c87-9691-4184a0eba236" />  
 
@@ -44,14 +55,11 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 - React
 - Lucide React
 - Tailwind CSS
-- Firebase (website)
+- Firebase (Hosting and Code)
 - Firebox (database)
 
 # Documentation  
 *This section past this point is the documentation section, which documents and briefly explains the componenets within the web application*  
-
-## Website Flow
-*NEULIB Scan* opens right away with the login screen where students would input their email, sex, and their college program.  
 
 ### The main Login Screen
 
