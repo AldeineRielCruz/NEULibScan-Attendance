@@ -10,7 +10,7 @@ It is intended for recording attendances within a site, supposedly from stationa
   - [Dashboard Screen](#NEULib-Scan-Admin-Dashboard-Screen)
   - [Firebase Console](#Firebase-Console)
 - [**Website Viewing/How to use Repo**](#Link-to-the-website-for-viewing)
-- [**Frameworks**](#The-Website-was-made-with-the-following-frameworks:)
+- [**Frameworks**](#The-Website-was-made-with-the-following-frameworks)
 - [**Documentation**](#Documentation)
   - [Main Login Screen](#Firebase-Console)
     - [Email](#Email-field)
@@ -54,7 +54,7 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 **You can also clone the repository and run this locally using the "Firebase Local Emulator Suite"; refer to this link after cloning the repo:**    
 [Install, configure and integrate Local Emulator Suite](https://firebase.google.com/docs/emulator-suite/install_and_configure)
 
-## The Website was made with the following frameworks: 
+## The Website was made with the following frameworks
 - NextJs
 - React
 - Lucide React
