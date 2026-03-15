@@ -4,10 +4,10 @@
 An attendance web app that records NEU institional emails along with their gender and college program.  
 It is intended for recording attendances within a site, supposedly from stationary computers within the library students can see and be insisted to fill up.  
 
-#Sections  
+# Sections  
 - Screenshots
--- [Login Screen](#NEULib-Scan-Login-Screen)
--- [Dashboard Screen2](#NEULib-Scan-Admin-Dashboard-Screen)
+-   [Login Screen](#NEULib-Scan-Login-Screen)
+-  [Dashboard Screen2](#NEULib-Scan-Admin-Dashboard-Screen)
 
 
 ### *NEULib Scan Login Screen*
