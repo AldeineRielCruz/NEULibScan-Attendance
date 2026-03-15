@@ -63,12 +63,14 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 - Firebox (database)
 
 # Documentation  
-*This section past this point is the documentation section, which documents and briefly explains the componenets within the web application*  
+*This section past this point is the documentation section, which documents and briefly explains the componenets within the web application*   
+If you would want to read the documentation via Google docs: [NEULIB-Scan Documentation](https://docs.google.com/document/d/16qOQxCK-8VFSu8Be2-HOJK3x8kaXIb6fhOQY6LY3hRU/edit?usp=sharing)  
+But the documentation from here and there are pratically simillar, just in different formats.  
 
 ### The main Login Screen
 
 #### **Email field**  
-The Email field inputs a student's institutional email. Similar to an 'email' input field, it requires the email address of the school: '@neu.edu.ph' for it to be a valid input, if it doesn't it will show an error message.  
+The Email field inputs a student's institutional email. Similar to an 'email' input field, it requires the email address of the school: '@neu.edu.ph' for it to be a valid input, if it doesn't it will show an error message.   
 
 
 ~/src/app/components/StudentCheckIn.tsx
@@ -80,7 +82,7 @@ The Email field inputs a student's institutional email. Similar to an 'email' in
     }
 ```
 #### **Sex RadioGroup Choice**
-The second input requires what the Sex of the student is, it uses two RadioGroups (2 circle chocies) to easily pick between the two.
+The second input requires what the Sex of the student is, it uses two RadioGroups (2 circle chocies) to easily pick between the two.  
 ~/src/app/components/StudentCheckIn.tsx  
 ```javascript
 <div className="space-y-2">
@@ -96,7 +98,7 @@ The second input requires what the Sex of the student is, it uses two RadioGroup
             </div>
 ```
 #### **College Program Dropdown**
-The last input field is a dropdown menu that makes the student pick their assigned college program (16 choices).
+The last input field is a dropdown menu that makes the student pick their assigned college program (16 choices).   
 ~/src/app/components/StudentCheckIn.tsx  
 ```javascript
  <div className="space-y-2">
