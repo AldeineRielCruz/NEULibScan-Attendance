@@ -5,10 +5,10 @@ An attendance web app that records NEU institional emails along with their gende
 It is intended for recording attendances within a site, supposedly from stationary computers within the library students can see and be insisted to fill up.  
 
 # Sections  
-- *Screenshots*
- - [Login Screen](#NEULib-Scan-Login-Screen)
- - [Dashboard Screen](#NEULib-Scan-Admin-Dashboard-Screen)
- - [Firebase Console](#Firebase-Console)
+- **Screenshots**
+  - [Login Screen](#NEULib-Scan-Login-Screen)
+  - [Dashboard Screen](#NEULib-Scan-Admin-Dashboard-Screen)
+  - [Firebase Console](#Firebase-Console)
 
 
 ### *NEULib Scan Login Screen*
