@@ -495,9 +495,12 @@ Other elements within the dashboards are summary information about the data.
               <p className="text-xs text-muted-foreground">Database connected</p>
             </CardContent>
 ```
-# Return 
+# Conclusion
 You have reached to end of the documentation section.  
-[Return to the Main Section](#Sections)
+[Return to the Main Section](#Sections)  
+
+Overall, this website covers basic database methods which utilizes parsing data to become readable chart-based information. Keep in mind this is a prototype website for a redesign of the New Era University login system meaning it isn’t to be used as is without checks from professionals as it may have some vulnerabilities and inconsistent data. It can benefit more from connecting to an already existing database of student emails and information to check and deny access to login if an inputted email is not found on that database, this can also remove the need of asking for the Sex and College Program as it is already linked information from that connected database. The website may be limited but it is enough to know and run statistics with all logged in users on the site itself, especially when taking dates and times into account. I have learned how data from a database  can be used for easy monitoring and judgement of masses of data viewed from  a website standpoint and would like to learn more about how to make these more secure, along with methods that make logging the data easier for users.
+
 
 
 
