@@ -5,9 +5,10 @@ An attendance web app that records NEU institional emails along with their gende
 It is intended for recording attendances within a site, supposedly from stationary computers within the library students can see and be insisted to fill up.  
 
 # Sections  
-- Screenshots
--   [Login Screen](#NEULib-Scan-Login-Screen)
--  [Dashboard Screen2](#NEULib-Scan-Admin-Dashboard-Screen)
+- *Screenshots*
+ - [Login Screen](#NEULib-Scan-Login-Screen)
+ - [Dashboard Screen2](#NEULib-Scan-Admin-Dashboard-Screen)
+- *
 
 
 ### *NEULib Scan Login Screen*
@@ -17,7 +18,10 @@ It is intended for recording attendances within a site, supposedly from stationa
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6dea290e-5beb-4477-b739-fc5b8a352d04" />
 For veiwing statistics of student attendences in the library, there is an admin panel to view these stats.  
 
-It uses the inbuilt Firebox database (backend of firebase studio) which has real-time viewing of the data without refreshing the admin dashboard page.  
+It uses the inbuilt Firebox database (backend of firebase studio) which has real-time viewing of the data without refreshing the admin dashboard page.   
+
+Firebase Console  
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6dea290e-5beb-4477-b739-fc5b8a352d04" />
 <details>
   <summary>Admin Password</summary>
   
