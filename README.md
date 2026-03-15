@@ -19,8 +19,12 @@ It is intended for recording attendances within a site, supposedly from stationa
     - [HandleSumbit button](#The-handlesubmit-function)
   - [Admin Portal](#The-Admin-Portal-Tab)
   - [Admin Dashboard](#Admin-Dashboard)
-    -[Dashboard Charts](#The-Dashboard-Charts)
-      -[Sex Distribution](#Sex-Distribution-Chart)
+    - [Dashboard Charts](#The-Dashboard-Charts)
+      - [Sex Distribution](#Sex-Distribution-Chart)
+      - [College Program Distribution](#College-Program-Distribution-Chart)
+      - [Time Trends](#Time-Trends-Chart)
+    - [Recent Activity Table](#Recent-Activity-Table)
+    - [Other Dashboard Elements](#Other-Dashboard-Elements)
     
 ### *NEULib Scan Login Screen*
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ed88f746-c3fb-4c87-9691-4184a0eba236" />  
