@@ -2,7 +2,13 @@
 **NEULib Scan is an attendance web app intended for keeping track of the students that utilize the university's library.**  
 
 An attendance web app that records NEU institional emails along with their gender and college program.  
-It is intended for recording attendances within a site, supposedly from stationary computers within the library students can see and be insisted to fill up.
+It is intended for recording attendances within a site, supposedly from stationary computers within the library students can see and be insisted to fill up.  
+
+#Sections  
+- Screenshots
+-- [Login Screen](#NEULib-Scan-Login-Screen)
+-- [Dashboard Screen2](#NEULib-Scan-Admin-Dashboard-Screen)
+
 
 ### *NEULib Scan Login Screen*
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ed88f746-c3fb-4c87-9691-4184a0eba236" />  
