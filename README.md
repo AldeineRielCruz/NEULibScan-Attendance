@@ -197,7 +197,7 @@ if (status === 'success') {
 ### The Admin portal tab  
 The admin portal is a seperate tab that can be found on the main card component, there are two input fields required to login.  
 - **Email and Password input**
-In contrast to the main student login, it no longer checks for the institional email despite the placeholder saying so, it just prioritizes a defined email and password for the login.
+In contrast to the main student login, it no longer checks for the institional email despite the placeholder saying so, it just prioritizes a defined email and password for the login.  
 PreDefined Values (these can be changed):  
 <details>
   <summary>Admin Password</summary>
@@ -277,7 +277,7 @@ import DashboardCharts from '@/components/DashboardCharts';
         <DashboardCharts records={attendanceList} />
 ```
 
-#### Sex Chart  
+#### Sex Distribution Chart
 The chart shows the amount of students that are male or female that are logged in within the system, uses a stylized pie chart.  
 ~/src/components/DashboardCharts.tsx  
 ```javascript
@@ -315,7 +315,7 @@ The chart shows the amount of students that are male or female that are logged i
           </div>
         </CardContent>
 ```
-#### College Program Chart  
+#### College Program Distribution Chart
 Shows the amount of students that within a specific college Program (out of the 16) that are logged in within the system, uses a standard bar chart.  
 ~/src/components/DashboardCharts.tsx  
 ```javascript
@@ -351,7 +351,7 @@ Shows the amount of students that within a specific college Program (out of the 
         </CardContent>
       </Card>
 ```
-#### Top times and days Chart  
+#### Time Trends Chart
 Shows the times by categories of Hour, Days, Month, Year. Slightly hierarchical between days to years, but hours applies all the days as to see a trending hour of login despite the day.  
 ~/src/components/DashboardCharts.tsx  
 ```javascript
@@ -434,7 +434,48 @@ In the Sex column, Male and Female have their own seperate badges for styling. D
                       </TableCell>
                     </TableRow>
 ```
-### Other Elements
+### Other Dashboard Elements  
+Other elements within the dashboards are summary information about the data.  
+- This card shows the total amount of students that are logged within the database.  
+```javascript
+            <CardContent>
+              <div className="text-2xl font-bold">{attendanceList.length}</div>
+              <p className="text-xs text-muted-foreground">Real-time total</p>
+            </CardContent>
+```
+- This Card element shows the admin's email  
+```javascript
+<CardContent>
+              <div className="text-xl font-bold truncate">Administrator</div>
+              <p className="text-xs text-muted-foreground">{user?.email}</p>
+</CardContent>
+```
+- This Card Element checks if there any entries on the database. If there's none, its labeled 'No entries', if there is the label states: 'Recently'  
+```javascript
+  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Latest Entry</CardTitle>
+              <CalendarIcon className="w-4 h-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{attendanceList.length > 0 ? 'Recently' : 'No entries'}</div>
+              <p className="text-xs text-muted-foreground">Auto-updating</p>
+            </CardContent>
+```
+All other card elements are for design purposes which fills the white space.  
+- Database Status
+```javascript
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Status</CardTitle>
+              <Clock className="w-4 h-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">Active</div>
+              <p className="text-xs text-muted-foreground">Database connected</p>
+            </CardContent>
+```
+
+
+
 
 
 
