@@ -46,7 +46,8 @@ It uses the inbuilt Firebox database (backend of firebase studio) which has real
 ### The main Login Screen
 
 #### **Email field**  
-The Email field inputs a student's institutional email. Similar to an 'email' input field, it requires the email address of the school: '@neu.edu.ph' for it to be a valid input, if it doesn't it will show an error message.
+The Email field inputs a student's institutional email. Similar to an 'email' input field, it requires the email address of the school: '@neu.edu.ph' for it to be a valid input, if it doesn't it will show an error message.  
+
 
 ~/src/app/components/StudentCheckIn.tsx
  ```javascript
@@ -450,7 +451,7 @@ Other elements within the dashboards are summary information about the data.
               <p className="text-xs text-muted-foreground">{user?.email}</p>
 </CardContent>
 ```
-- This Card Element checks if there any entries on the database. If there's none, its labeled 'No entries', if there is the label states: 'Recently'  
+- This Card Element checks if there are any entries on the database. If there's none, its labeled 'No entries', if there is the label states: 'Recently'  
 ```javascript
   <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Latest Entry</CardTitle>
