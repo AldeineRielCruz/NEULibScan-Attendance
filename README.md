@@ -6,9 +6,9 @@ It is intended for recording attendances within a site, supposedly from stationa
 
 # Sections  
 - *Screenshots*
- - [Login Screen](###NEULib-Scan-Login-Screen)
- - [Dashboard Screen](###NEULib-Scan-Admin-Dashboard-Screen)
- - [Firebase Console](###Firebase-Console)
+ - [Login Screen](#NEULib-Scan-Login-Screen)
+ - [Dashboard Screen](#NEULib-Scan-Admin-Dashboard-Screen)
+ - [Firebase Console](#Firebase-Console)
 
 
 ### *NEULib Scan Login Screen*
@@ -21,7 +21,7 @@ For veiwing statistics of student attendences in the library, there is an admin 
 It uses the inbuilt Firebox database (backend of firebase studio) which has real-time viewing of the data without refreshing the admin dashboard page.   
 
 ### Firebase Console  
-
+<a href="https://ibb.co/s9TCH7T0"><img src="https://i.ibb.co/fd39vJ3h/image.png" alt="image" border="0"></a>
 <details>
   <summary>Admin Password</summary>
   
