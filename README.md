@@ -483,9 +483,8 @@ Other elements within the dashboards are summary information about the data.
               <div className="text-2xl font-bold">{attendanceList.length > 0 ? 'Recently' : 'No entries'}</div>
               <p className="text-xs text-muted-foreground">Auto-updating</p>
             </CardContent>
-```
-All other card elements are for design purposes which fills the white space.  
-- Database Status
+``` 
+- This Card element shows the current status of the database (always active or access to the page would not work).
 ```javascript
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Status</CardTitle>
@@ -496,6 +495,9 @@ All other card elements are for design purposes which fills the white space.
               <p className="text-xs text-muted-foreground">Database connected</p>
             </CardContent>
 ```
+# Return 
+You have reached to end of the documentation section.  
+[Return to the Main Section](#Sections)
 
 
 
